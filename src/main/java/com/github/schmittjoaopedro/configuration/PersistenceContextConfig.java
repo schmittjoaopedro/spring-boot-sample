@@ -1,7 +1,6 @@
 package com.github.schmittjoaopedro.configuration;
 
 import org.neo4j.ogm.session.SessionFactory;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +14,6 @@ import javax.annotation.Resource;
 
 @Configuration
 @ComponentScan("com.github.schmittjoaopedro")
-@EnableAutoConfiguration
 @EnableTransactionManagement
 @EnableNeo4jRepositories("com.github.schmittjoaopedro.repository")
 @PropertySource("classpath:application.properties")

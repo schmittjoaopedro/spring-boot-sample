@@ -1,1 +1,7 @@
 https://hellokoding.com/registration-and-login-example-with-spring-security-spring-boot-spring-data-jpa-hsql-jsp/
+
+# Iniciando serviços
+# Redis
+docker run redis
+# Neo4J
+docker run --publish=7474:7474 --publish=7687:7687 --volume=$HOME/neo4j/data:/data neo4j
