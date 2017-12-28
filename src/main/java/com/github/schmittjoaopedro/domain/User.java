@@ -1,5 +1,6 @@
 package com.github.schmittjoaopedro.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -15,6 +16,8 @@ import java.util.stream.Collectors;
 
 @NodeEntity
 public class User implements UserDetails {
+
+    private static final long serialVersionUID = 1L;
 
     @GraphId
     private Long id;
@@ -84,31 +87,37 @@ public class User implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.getRoles().stream().map(item -> new SimpleGrantedAuthority(item.getName())).collect(Collectors.toSet());
     }
 
     @Override
+    @JsonIgnore
     public String getUsername() {
         return email;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }

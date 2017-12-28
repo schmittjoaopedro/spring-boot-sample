@@ -3,11 +3,14 @@ package com.github.schmittjoaopedro.domain;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @NodeEntity
-public class Role {
+public class Role implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @GraphId
     private Long id;

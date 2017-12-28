@@ -19,7 +19,7 @@ public class ApiController {
     @PostMapping("/register")
     public void createAccount(@RequestBody User user) {
         if(user.getId() == null)
-            userService.save(user);
+            userService.createAccount(user);
     }
 
 }
