@@ -8,13 +8,19 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.annotation.Resource;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String DOMAIN = "com.example";
 
@@ -22,17 +28,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
 
     private static final String ROOT_DN = "DC=example,DC=com";
 
+    @Resource
+    private UserDetailsService userDetailsService;
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         // Use this for AD
         //auth.authenticationProvider(activeDirectoryLdapAuthenticationProvider());
 
         //Memory authentication
-        auth.inMemoryAuthentication()
-                .passwordEncoder(NoOpPasswordEncoder.getInstance())
-                .withUser("user")
-                .password("pass")
-                .roles("USER");
+        //auth.inMemoryAuthentication()
+        //        .passwordEncoder(NoOpPasswordEncoder.getInstance())
+        //        .withUser("user")
+        //        .password("pass")
+        //        .roles("USER");
+
+        //Database authentication
+        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
     }
 
     @Override
@@ -41,13 +58,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
             .csrf()
                 .disable()
             .authorizeRequests()
-                .antMatchers("/resources/**").authenticated()
-                .anyRequest().permitAll()
-            .and()
-                .formLogin()
+                .antMatchers("/api/**", "/login", "/login.jsp", "/register", "/register.jsp", "/css/**", "/js/**", "/images/**", "/**/favicon.ico").permitAll()
+                .anyRequest().authenticated()
+                .and()
+            .formLogin()
+                .loginPage("/login")
+                .successHandler(successHandler())
                 .permitAll()
-            .and()
-                .httpBasic();
+                .and()
+            .logout()
+                .permitAll()
+                .and()
+            .httpBasic();
     }
 
     @Bean
@@ -56,6 +78,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
         authenticationProvider.setConvertSubErrorCodesToExceptions(true);
         authenticationProvider.setUseAuthenticationRequestCredentials(true);
         return authenticationProvider;
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler successHandler() {
+        SimpleUrlAuthenticationSuccessHandler handler = new SimpleUrlAuthenticationSuccessHandler();
+        handler.setDefaultTargetUrl("/");
+        return handler;
     }
 
 }
