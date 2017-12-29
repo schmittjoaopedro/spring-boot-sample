@@ -1,5 +1,6 @@
 package com.github.schmittjoaopedro.service;
 
+import com.github.schmittjoaopedro.domain.Role;
 import com.github.schmittjoaopedro.domain.User;
 import com.github.schmittjoaopedro.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -46,6 +47,12 @@ public class UserService {
         boolean isNewPassword = !persistedUsers.getPassword().equals(user.getPassword());
         if(isNewPassword) {
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        }
+        for(Role role : user.getRoles()) {
+            boolean isUserExistent = role.getUsers().stream().anyMatch(u -> u.getId().equals(user.getId()));
+            if(!isUserExistent) {
+                role.getUsers().add(user);
+            }
         }
         userRepository.save(user);
     }

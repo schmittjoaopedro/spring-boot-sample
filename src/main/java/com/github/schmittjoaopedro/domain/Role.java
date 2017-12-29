@@ -1,5 +1,6 @@
 package com.github.schmittjoaopedro.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 
@@ -17,6 +18,7 @@ public class Role implements Serializable {
 
     private String name;
 
+    @JsonIgnore
     private Set<User> users = new HashSet<>();
 
     public Role() {
