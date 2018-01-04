@@ -37,15 +37,15 @@ public class PersistenceContextConfig {
         String username = env.getProperty("spring.data.neo4j.username");
         String password = env.getProperty("spring.data.neo4j.password");
         String uri = env.getProperty("spring.data.neo4j.uri");
-        org.neo4j.ogm.config.Configuration configuration = new org.neo4j.ogm.config.Configuration();
-        configuration.driverConfiguration().setCredentials(username, password);
-        configuration.driverConfiguration().setDriverClassName("org.neo4j.ogm.drivers.bolt.driver.BoltDriver");
-        configuration.driverConfiguration().setURI(uri);
-        return configuration;
-//        return new org.neo4j.ogm.config.Configuration.Builder()
-//                .uri(uri)
-//                .credentials(username, password)
-//                .build();
+//        org.neo4j.ogm.config.Configuration configuration = new org.neo4j.ogm.config.Configuration();
+//        configuration.driverConfiguration().setCredentials(username, password);
+//        configuration.driverConfiguration().setDriverClassName("org.neo4j.ogm.drivers.bolt.driver.BoltDriver");
+//        configuration.driverConfiguration().setURI(uri);
+//        return configuration;
+        return new org.neo4j.ogm.config.Configuration.Builder()
+                .uri(uri)
+                .credentials(username, password)
+                .build();
     }
 
 }

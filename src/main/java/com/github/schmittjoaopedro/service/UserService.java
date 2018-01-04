@@ -31,7 +31,7 @@ public class UserService {
     }
 
     public User findById(Long id) {
-        return userRepository.findOne(id);
+        return userRepository.findById(id).get();
     }
 
     public List<User> findAll() {
@@ -43,7 +43,7 @@ public class UserService {
     }
 
     public void save(User user) {
-        User persistedUsers = userRepository.findOne(user.getId());
+        User persistedUsers = userRepository.findById(user.getId()).get();
         boolean isNewPassword = !persistedUsers.getPassword().equals(user.getPassword());
         if(isNewPassword) {
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));

@@ -1,12 +1,14 @@
 package com.github.schmittjoaopedro.domain;
 
-import org.neo4j.ogm.annotation.GraphId;
+import org.neo4j.ogm.annotation.GeneratedValue;
+import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 
 @NodeEntity
 public class AttributeValueDescription {
 
-    @GraphId
+    @Id
+    @GeneratedValue
     private Long id;
 
     private String language;

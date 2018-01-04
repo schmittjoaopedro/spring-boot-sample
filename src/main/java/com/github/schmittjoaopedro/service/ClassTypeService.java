@@ -25,6 +25,6 @@ public class ClassTypeService {
 
     @Transactional(readOnly = true)
     public ClassType findOne(Long id) {
-        return classTypeRepository.findOne(id);
+        return classTypeRepository.findById(id).get();
     }
 }

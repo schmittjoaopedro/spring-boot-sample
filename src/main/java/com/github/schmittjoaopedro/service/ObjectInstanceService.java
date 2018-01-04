@@ -33,6 +33,6 @@ public class ObjectInstanceService {
 
     @Transactional(readOnly = true)
     public ObjectInstance findOne(Long id) {
-        return objectInstanceRepository.findOne(id);
+        return objectInstanceRepository.findById(id).get();
     }
 }

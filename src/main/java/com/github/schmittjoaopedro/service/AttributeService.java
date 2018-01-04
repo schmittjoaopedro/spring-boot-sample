@@ -20,7 +20,7 @@ public class AttributeService {
 
     @Transactional(readOnly = true)
     public Attribute findOne(Long id) {
-        return attributeRepository.findOne(id);
+        return attributeRepository.findById(id).get();
     }
 
     @Transactional

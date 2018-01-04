@@ -2,6 +2,7 @@ package com.github.persistence;
 
 import com.github.schmittjoaopedro.App;
 import com.github.schmittjoaopedro.domain.*;
+import com.github.schmittjoaopedro.repository.ObjectValueRepository;
 import com.github.schmittjoaopedro.service.AttributeService;
 import com.github.schmittjoaopedro.service.ClassTypeService;
 import com.github.schmittjoaopedro.service.ObjectInstanceService;
@@ -33,6 +34,9 @@ public class FullPersistenceTest {
 
     @Resource
     private ClassTypeService classTypeService;
+
+    @Resource
+    private ObjectValueRepository objectValueRepository;
 
     @Test
     public void _clearDatabase() {
@@ -115,9 +119,10 @@ public class FullPersistenceTest {
         O2.getChildren().add(O3);
         O1 = objectInstanceService.save(O1);
 
-        O1.getValues().get(0).setValue("00002");
-        O1.getValues().get(0).setAttribute(null);
-        objectInstanceService.save(O1);
+        ObjectValue OV = objectValueRepository.findById(O1.getValues().get(0).getId()).get();
+        OV.setValue("00002");
+        OV.setAttribute(null);
+        objectValueRepository.save(OV);
 
         Assert.assertTrue(true);
     }
