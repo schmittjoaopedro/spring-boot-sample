@@ -8,7 +8,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
-@RequestMapping("/roles")
+@RequestMapping("/resources/roles")
 public class RoleController {
 
     @Resource

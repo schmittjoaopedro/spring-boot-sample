@@ -15,6 +15,20 @@ public class PagesController {
         return "index";
     }
 
+    @GetMapping("/users")
+    public String getUsersPage(Model model) {
+        model.addAttribute("user", SessionManager.getInstances().getSessionUser());
+        model.addAttribute("module", "users");
+        return "application/user-admin";
+    }
+
+    @GetMapping("/roles")
+    public String getRolesPage(Model model) {
+        model.addAttribute("user", SessionManager.getInstances().getSessionUser());
+        model.addAttribute("module", "roles");
+        return "application/role-admin";
+    }
+
     @GetMapping("/login")
     public String getLoginPage() {
         return "login";

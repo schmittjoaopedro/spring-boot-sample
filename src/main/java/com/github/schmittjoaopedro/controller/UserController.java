@@ -8,7 +8,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/resources/users")
 public class UserController {
 
     @Resource

@@ -19,8 +19,11 @@
                 <li th:classappend="${module == 'home' ? 'active' : ''}">
                     <a href="#" th:href="@{/}">Home</a>
                 </li>
-                <li th:classappend="${module == 'tasks' ? 'active' : ''}">
-                    <a href="#" th:href="@{/task}">User</a>
+                <li th:classappend="${module == 'users' ? 'active' : ''}">
+                    <a href="#" th:href="@{/users}">Users</a>
+                </li>
+                <li th:classappend="${module == 'roles' ? 'active' : ''}">
+                    <a href="#" th:href="@{/roles}">Roles</a>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">

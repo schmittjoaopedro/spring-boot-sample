@@ -42,6 +42,10 @@ public class PersistenceContextConfig {
         configuration.driverConfiguration().setDriverClassName("org.neo4j.ogm.drivers.bolt.driver.BoltDriver");
         configuration.driverConfiguration().setURI(uri);
         return configuration;
+//        return new org.neo4j.ogm.config.Configuration.Builder()
+//                .uri(uri)
+//                .credentials(username, password)
+//                .build();
     }
 
 }
