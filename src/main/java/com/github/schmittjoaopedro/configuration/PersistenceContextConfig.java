@@ -24,7 +24,8 @@ public class PersistenceContextConfig {
 
     @Bean
     public SessionFactory getSessionFactory() {
-        return new SessionFactory(configuration(), "com.github.schmittjoaopedro.domain");
+        SessionFactory sessionFactory = new SessionFactory(configuration(), "com.github.schmittjoaopedro.domain");
+        return sessionFactory;
     }
 
     @Bean

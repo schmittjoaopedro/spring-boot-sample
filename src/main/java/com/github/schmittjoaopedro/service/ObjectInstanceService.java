@@ -3,6 +3,7 @@ package com.github.schmittjoaopedro.service;
 import com.github.schmittjoaopedro.domain.ObjectInstance;
 import com.github.schmittjoaopedro.domain.ObjectValue;
 import com.github.schmittjoaopedro.repository.ObjectInstanceRepository;
+import com.github.schmittjoaopedro.repository.ObjectValueRepository;
 import org.neo4j.ogm.session.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,9 @@ public class ObjectInstanceService {
 
     @Resource
     private ObjectInstanceRepository objectInstanceRepository;
+
+    @Resource
+    private ObjectValueRepository objectValueRepository;
 
     @Resource
     private Session session;
@@ -35,4 +39,5 @@ public class ObjectInstanceService {
     public ObjectInstance findOne(Long id) {
         return objectInstanceRepository.findById(id).get();
     }
+
 }

@@ -119,10 +119,22 @@ public class FullPersistenceTest {
         O2.getChildren().add(O3);
         O1 = objectInstanceService.save(O1);
 
+        // Remover associação direta. Problema ao remover o relacionamento por
+        // meio do save! Tenho que fazer uma query manual
         ObjectValue OV = objectValueRepository.findById(O1.getValues().get(0).getId()).get();
         OV.setValue("00002");
         OV.setAttribute(null);
         objectValueRepository.save(OV);
+        objectValueRepository.removeCharacteristic(OV.getId());
+
+        // Remover o objeto da lista, não consigo remover sem mandar remover
+        // explicitamente o objeto
+        O1 = objectInstanceService.findOne(O1.getId());
+        OV = O1.getValues().get(0);
+        OV.setObjectInstance(null);
+        O1.getValues().clear();
+        objectInstanceService.save(O1);
+        objectValueRepository.delete(OV);
 
         Assert.assertTrue(true);
     }
