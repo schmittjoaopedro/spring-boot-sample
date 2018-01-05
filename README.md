@@ -179,6 +179,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
 
+// A convenience annotation used to configure the application 
 @SpringBootApplication
 public class App {
 
@@ -188,6 +189,60 @@ public class App {
 
 }
 ```
+
+É apresentado na listagem abaixo a configuração da base de dados com Spring Data Neo4J (SDN).
+
+```java
+package com.github.schmittjoaopedro.configuration;
+
+import org.neo4j.ogm.session.SessionFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
+import org.springframework.data.neo4j.transaction.Neo4jTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import javax.annotation.Resource;
+
+@Configuration
+@ComponentScan("com.github.schmittjoaopedro")
+@EnableTransactionManagement
+@EnableNeo4jRepositories("com.github.schmittjoaopedro.repository")
+@PropertySource("classpath:application.properties")
+public class PersistenceContextConfig {
+    
+    @Resource
+    private Environment env; // Receive the properties from "application.properties" file
+    
+    @Bean
+    public SessionFactory getSessionFactory() {
+        SessionFactory sessionFactory = new SessionFactory(configuration(), "com.github.schmittjoaopedro.domain");
+        return sessionFactory;
+    }
+    
+    @Bean
+    public Neo4jTransactionManager transactionManager() throws Exception {
+        return new Neo4jTransactionManager(getSessionFactory());
+    }
+    
+    @Bean
+    public org.neo4j.ogm.config.Configuration configuration() {
+        String username = env.getProperty("spring.data.neo4j.username");
+        String password = env.getProperty("spring.data.neo4j.password");
+        String uri = env.getProperty("spring.data.neo4j.uri");
+        return new org.neo4j.ogm.config.Configuration.Builder()
+            .uri(uri)
+            .credentials(username, password)
+            .build();
+    }
+
+}
+```
+
+
 
 estrutura de pacotes
     configuration
