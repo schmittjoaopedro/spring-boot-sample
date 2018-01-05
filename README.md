@@ -160,7 +160,7 @@ A seguir será apresentado a organização do código fonte:
 
 O projeto está organizado conforme a seguinte figura:
 
-![alt text](package_organization.png "Package organization" { width=50% })
+![Package organization](package_organization.png)
 
 Uma breve descrição os pacotes:
 * src/main/java - contém todo o código Java da aplicação
