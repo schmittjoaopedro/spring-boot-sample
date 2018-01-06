@@ -10,6 +10,7 @@
 	<packaging>jar</packaging>
 	<name>spring-boot-sample</name>
 	<description>Demo project for Spring Boot</description>
+    <url>https://github.com/schmittjoaopedro/spring-boot-sample</url>
 
     <!-- Spring boot configuration -->
     <parent>

@@ -1,38 +1,39 @@
-# Avaliação simples do Spring-boot
+# Spring boot + Redis + Neo4j + security
 
-O objetivo desse projeto é, fazer uma avaliação superficial do spring-boot e algumas outras tecnologias referente há alguns requisitos comuns que a maioria das aplicações possuem.
-A contribuição é compartilhar uma arquitetura inicial para a concepção de novos projetos.
-As tecnologias avaliadas nesse projeto são as seguintes:
+This study objective evaluate superficially the spring boot framework integrated with two persistence mechanisms, implementing some common requirements present in a huge number of applications.
+The contribution aims to share a common architecture to be used as base to create new projects.
+The technologies used in this project are:
 * Spring boot 2.0.0.M7
 * Redis
 * Neo4J
 
-Os requisitos não funcionais comuns são:
-* Um usuário sem autenticação só pode acessar a pagina de login e de cadastro.
-* Um usuário autenticado pode acessar as páginas de administração.
+The functional requirements are:
+* Anonymous users can only access the login and register pages.
+* Authenticated users can access all pages
 
-Os requisitos funcionais são:
-* Ao reiniciar o servidor, o usuário não pode perder a sessão
-* Persistência em cascata, possibilitando dados stateless.
+The non-functional requirements are:
+* A user can not lose the session when the server is restarted.
+* A business entity should be saved with only one click (cascade model)
 
-# Ambiente
+# Environment
 
-Em relação ao ambiente de desenvolvimento, os seguintes programas foram utilizados:
- * JDK versão 9.0.1+11 64bit
- * IntelliJ IDEA Community 2017.1.4
- * Maven 3.3.9
- * Docker 17.09.1-ce
- * Redis 4.0.6 64bits
- * Neo4j 3.3.1
+The development environment is composed by the following programs:
+* JDK versão 9.0.1+11 64bit
+* IntelliJ IDEA Community 2017.1.4
+* Maven 3.3.9
+* Docker 17.09.1-ce
+* Redis 4.0.6 64bits
+* Neo4j 3.3.1
+* Ubuntu 16.04 LTS
 
-Para preparar o ambiente de desenvolvimento é necessário seguir os seguintes passos:
- * Importar o projeto do Github no IntelliJ
- * Iniciar o redis com o comando `docker run redis`
- * Iniciar o Neo4J com o comando `docker run --publish=7474:7474 --publish=7687:7687 --volume=$HOME/neo4j/data:/data neo4j`
+To prepare the development environment is necessary to execute the following steps: 
+ * Import on IntelliJ the project from [GitHub](https://github.com/schmittjoaopedro/spring-boot-sample)
+ * Start Redis with the command `docker run redis`
+ * Start Neo4j with the command `docker run --publish=7474:7474 --publish=7687:7687 --volume=$HOME/neo4j/data:/data neo4j`
 
-# Código fonte
+# Project
 
-A seguir será apresentado a organização do código fonte:
+In the next subsections will be presented the source code organization.
 
 ## pom.xml
 
@@ -48,6 +49,7 @@ A seguir será apresentado a organização do código fonte:
     <packaging>jar</packaging>
     <name>spring-boot-sample</name>
     <description>Demo project for Spring Boot</description>
+    <url>https://github.com/schmittjoaopedro/spring-boot-sample</url>
 
     <!-- Spring boot configuration -->
     <parent>
@@ -156,21 +158,21 @@ A seguir será apresentado a organização do código fonte:
 </project>
 ```
 
-## Estrutura de pacotes
+## Packages structure
 
-O projeto está organizado conforme a seguinte figura:
+The files and packages are structure as follows:
 
 ![Package organization](package_organization.png)
 
-Uma breve descrição os pacotes:
-* src/main/java - contém todo o código Java da aplicação
-* src/main/resources/static - contém os arquivos estáticos de js, css e imagens.
-* src/main/resources/templates - contém os arquivos html que são acessados por URI mapeadas no servidor
-* src/test - contém todos os arquivos Java e auxiliares usados para testar a aplicação
+A brief description about the main packages:
+* src/main/java - contains all java source code of the application
+* src/main/resources/static - contains all static files (js, css e images).
+* src/main/resources/templates - contains all web pages mapped by the server with controllers
+* src/test - contains all files to test the application
 
-## Código fonte
+## Source code
 
-O arquivo *App.java* é a classe principal reponsável por iniciar a aplicação WEB.
+The *App.java* file is the main Java class used to start the WEB app.
 
 App.java 
 ```java
@@ -191,9 +193,9 @@ public class App {
 }
 ```
 
-### Pacote *configuration*
+### The *configuration* package
 
-É apresentado na listagem abaixo a configuração da base de dados com Spring Data Neo4J (SDN).
+The next class describes the connector configuration used to persist data in Neo4j using Spring Data Neo4j (SDN).
 
 PersistenceContextConfig.java
 ```java
@@ -246,8 +248,9 @@ public class PersistenceContextConfig {
 }
 ```
 
-A parte de autenticação e autorização apresentada na listagem abaixo, contém três formas de autenticação diferente, usando o Active Directory (AD), em memória e usando a base de dados.
-Referente a autorização, é permitido aos usuários anônimos acessar a página de login, cadastro, arquivos estáticos (assets) e serviços REST da API. 
+In terms of authentication is presented in the next class three ways of authentication, using Active Directory (AD), using an object in memory and using a database.
+
+In terms of authorization, is allowed to anonymous users (users not authenticated) to access the necessary resources to create a new account and to make login in the application.
 
 WebSecurityConfig.java
 ```java
@@ -341,9 +344,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 }
 ```
 
-### Pacote *controller*
+### The *controller* package
 
-O pacote controlador tem três tipos de resources, o primeiro tipo permite que usuário anônimos acessem serviços da API REST (ApiController), outro faz o mapeamento das páginas html (PagesController) e o último tipo permite que somente usuários autorizados possam acessar as requisições REST (RoleController e UserController).
+The *controller* package contains all classes to create the REST layer of the application.
+The class *ApiController.java* disponibilizes a public layer that anonymous users can use to invoke application procedures.
+The class *PagesController.java* implements mapping to html pages, for example, we can access the web page application/user-admin.html calling /users.
+The classes *RoleController.java* and *UserController.java* disponibilizes server procedures for authenticated users.
 
 ApiController.java
 ```java
@@ -460,12 +466,9 @@ public class UserController {
 }
 ```
 
-### Pacote *domain*
+### The *domain* package
 
-O pacote domain contém todas as entidades Java que representam os objetos de negócio. 
-Nesse caso as classes *User.java* e *Role.java* são usadas para segurança e as demais representam objetos de teste.
-Todas as classes são mapeadas para serem persistidas no Neo4j usando o Spring Data Neo4j (SDN).
-A seguir é apresentado um exemplo de classe.
+The package *domain* contains all java entities used by the application representing the business objects. For example, the classes *User.java* and *Role.java* are used to implements the authentication and authorization. All domain objects are configured to be persisted at Neo4j using SDN. Following are presented the classes *User.java* and *Role.java*.
 
 Role.java
 ```java
@@ -525,11 +528,10 @@ public class Role implements Serializable {
 }
 ```
 
-### Pacote *repository*
+### The *repository* package
 
-O pacote repository é reponsável por prover os métodos que irão executar a persistência dos objetos de domínio na base de dados.
-Pelo SDN a definição de interfaces que extendem Neo4jRepository é suficiente para o Spring prover a implementação necessária, e quando é necessário algo mais específico as interfaces podem então ser implementadas.
-Abaixo é apresentado um exemplo de interface.
+The *repository* package provides methods to persist domain objects in the Neo4j database.
+Using the SDN, the interface definition extending the class Neo4jRepository gives a default implementation to execute standard database operations. When a more specific implementation are necessary, the standard interface can be implemented.
 
 RoleRepository:
 ```java
@@ -545,11 +547,9 @@ public interface RoleRepository extends Neo4jRepository<Role, Long> {
 }
 ```
 
-### Pacote *service*
+### The *service* package
 
-Esse pacote é utilizado para preparar os objetos para persistência e realizar alguma lógica de negócio. 
-Do ponto de vista técnico, a maior parte dos métodos também é responsável por abrir a transação com a base de dados.
-A listagem abaixo apresenta uma classe service de exemplo.
+This package is used to prepare persistence objects to be pre-processed and to execute business logic. In this architecture, the *service* layer open the transaction with the database. The following class shows an example.
 
 RoleService.java
 ```java
@@ -592,11 +592,11 @@ public class RoleService {
 }
 ```
 
-### Pacote *utils*
+### The *utils* package
 
-Este último pacote possui algumas ferramentas que podem ser usadas a qualquer momento no código fonte.
+This package contains some utilities to be used in any part of the source code. Following, the utilities classes are presented.
 
-A listagem abaixo apresenta a classe *ContextProvider*, que permite acesso aos beans gerenciados pelo spring sem configurar uma injeção de dependências.
+The class *ContextProvider* give access to beans managed by Spring without declaring annotated attributes with @Resource or @Autowired.
 
 ContextProvider.java
 ```java
@@ -628,7 +628,7 @@ public class ContextProvider implements ApplicationContextAware {
 }
 ```
 
-A classe *SessionManager* possui a implementação que permite recuperar as informações do usuário da sessão.
+The *SessionManager* class implements an utility method that return the session user object stored in Redis.
 
 SessionManager.java
 ```java
@@ -664,13 +664,16 @@ public class SessionManager {
 }
 ```
 
-## Testes
+## Tests
 
-A classe *FullPersistenceTest* foi configurada para realizar um teste do modelo de persistência. 
-Esse teste, executa a criação e modificação de diferentes estruturas complexas. 
-Foi percebido que a persistência do SDN não permitiu a eliminação de relacionamentos one-to-one ao definir o valor da propriedade do relacionamento do objeto sendo salvo como nulo, e também que a eliminação de objetos da coleção não permite a configuração do mecânismo de cascata.
-A conclusão é que a persistência usando um formato stateless faz com que as implementações para gerenciar os relacionamentos das entidades fique mais complexo, quando comparado ao JPA usando Hibernate.
-A listagem abaixo apresenta a classe de testes.
+The annotated *FullPersistenceTest* class shows an example used to create integrated tests. This class aims to validate the functionalities of SDN as creation, modification and deletion using complex structures.
+
+The first test detected that SDN does not make possible to eliminate one-to-one relationships when defining an entity attribute as null of the object instance being persisted.
+
+The second test detected that, when a entity is removed from a collection (one-to-many or many-to-many relationship), is not possible to save the entity owner of the collection removing the detached objects (cascade removal).
+
+Is concluded that, using SDN to persist stateless objects with more complex structures, is very hard to manage relationships as is made with JPA and Hibernate for cascade persisting.
+The next code shows the *FullPersistenceTest*. 
 
 FullPersistenceTest.java
 ```java
@@ -819,10 +822,10 @@ public class FullPersistenceTest {
 
 ```
 
-# Conclusão
+# Conclusion
 
-A conclusão é que o desenvolvimento utilizando o spring-boot ficou extremamente simples e leve quando comparado aos formatos de desenvolvimento antigo.
+The conclusion in using spring boot to develop application is that, the framework simplifies and let more easy the web application development.
 
-A configuração da segurança e da persistência por meio de anotações faz com que a aplicação seja mais fácil de manter e tenha uma composição mais limpa.
+The security and persistence configuration using annotations, let the application more clean and with less mixtures of .java and .xml files.
 
-As dificuldades encontradas ao utilizar o SDN comparado ao JPA não inviabilizam seu uso, pelo motivo de que o domínio da aplicação deveria ser modelado para uma base relacional.
+The difficulties found are related to use SDN to persist objects as in JPA, for domain objects encoded as relational data.
