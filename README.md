@@ -28,6 +28,7 @@ To prepare the development environment is necessary to execute the following ste
  * Import on IntelliJ the project from [GitHub](https://github.com/schmittjoaopedro/spring-boot-sample)
  * Start Redis with the command `docker run redis`
  * Start Neo4j with the command `docker run --publish=7474:7474 --publish=7687:7687 --volume=$HOME/neo4j/data:/data neo4j`
+ * Start the application with the command `mvn spring-boot:run`
 
 # Project
 
