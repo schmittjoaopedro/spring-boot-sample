@@ -346,7 +346,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 The *controller* package contains all classes to create the REST layer of the application.
 The class *ApiController.java* implements public application procedures allowed to anonymous users.
-The class *PagesController.java* implements mapping to HTML files. Example, we can access the web page "application/user-admin.html" calling "/users".
+The class *PagesController.java* implements mapping to HTML files (eg. we can access the web page "application/user-admin.html" calling "/users").
 The classes *RoleController.java* and *UserController.java* implements server procedures for authenticated users.
 
 ApiController.java
