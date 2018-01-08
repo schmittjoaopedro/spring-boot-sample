@@ -1,23 +1,21 @@
 # Spring boot + Redis + Neo4j + security
 
-This study objective evaluate superficially the spring boot framework integrated with two persistence mechanisms, implementing some common requirements present in a huge number of applications.
-The contribution aims to share a common architecture to be used as base to create new projects.
-The technologies used in this project are:
+This study objective evaluates superficially the spring boot framework integrated with two persistence mechanisms, implementing some common requirements present in a huge number of applications. The contribution aims to share a common architecture to be used as a base to create new projects. The technologies used in this project are:
 * Spring boot 2.0.0.M7
 * Redis
 * Neo4J
 
 The functional requirements are:
-* Anonymous users can only access the login and register pages.
+* Anonymous users can only access the login and register pages
 * Authenticated users can access all pages
 
 The non-functional requirements are:
-* A user can not lose the session when the server is restarted.
+* An authenticated user cannot lose the session when the server is restarted
 * A business entity should be saved with only one click (cascade model)
 
 # Environment
 
-The development environment is composed by the following programs:
+The development environment is composed of the following programs:
 * JDK versão 9.0.1+11 64bit
 * IntelliJ IDEA Community 2017.1.4
 * Maven 3.3.9
@@ -160,13 +158,13 @@ In the next subsections will be presented the source code organization.
 
 ## Packages structure
 
-The files and packages are structure as follows:
+The files and packages are structured as follows:
 
 ![Package organization](package_organization.png)
 
-A brief description about the main packages:
+A brief description of the main packages:
 * src/main/java - contains all java source code of the application
-* src/main/resources/static - contains all static files (js, css e images).
+* src/main/resources/static - contains all static files (js, css e images)
 * src/main/resources/templates - contains all web pages mapped by the server with controllers
 * src/test - contains all files to test the application
 
@@ -248,9 +246,9 @@ public class PersistenceContextConfig {
 }
 ```
 
-In terms of authentication is presented in the next class three ways of authentication, using Active Directory (AD), using an object in memory and using a database.
+In authentication terms are presented in the next class three ways to obtain the login data, using Active Directory (AD), using an object in memory and using a database.
 
-In terms of authorization, is allowed to anonymous users (users not authenticated) to access the necessary resources to create a new account and to make login in the application.
+In authorization terms, is allowed to anonymous users (users not authenticated) to access the necessary resources to create a new account and to make login in the application.
 
 WebSecurityConfig.java
 ```java
@@ -292,7 +290,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        // Use this for AD
+        // Active Directory (AD) authentication
         //auth.authenticationProvider(activeDirectoryLdapAuthenticationProvider());
 
         //Memory authentication
@@ -326,7 +324,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .httpBasic();
     }
 
-    @Bean // A provider used to connect in an AD server
+    @Bean // A provider used to connect to an AD server
     public AuthenticationProvider activeDirectoryLdapAuthenticationProvider() {
         ActiveDirectoryLdapAuthenticationProvider authenticationProvider = new ActiveDirectoryLdapAuthenticationProvider(DOMAIN, URL, ROOT_DN);
         authenticationProvider.setConvertSubErrorCodesToExceptions(true);
@@ -347,9 +345,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 ### The *controller* package
 
 The *controller* package contains all classes to create the REST layer of the application.
-The class *ApiController.java* disponibilizes a public layer that anonymous users can use to invoke application procedures.
-The class *PagesController.java* implements mapping to html pages, for example, we can access the web page application/user-admin.html calling /users.
-The classes *RoleController.java* and *UserController.java* disponibilizes server procedures for authenticated users.
+The class *ApiController.java* implements public application procedures allowed to anonymous users.
+The class *PagesController.java* implements mapping to HTML files. Example, we can access the web page "application/user-admin.html" calling "/users".
+The classes *RoleController.java* and *UserController.java* implements server procedures for authenticated users.
 
 ApiController.java
 ```java
@@ -494,7 +492,7 @@ public class Role implements Serializable {
 
     private String name;
 
-    @JsonIgnore // To not generate cyclical referente by Jackson
+    @JsonIgnore // Block creation of cyclical references with Jackson
     private Set<User> users = new HashSet<>();
 
     public Role() {
@@ -530,8 +528,7 @@ public class Role implements Serializable {
 
 ### The *repository* package
 
-The *repository* package provides methods to persist domain objects in the Neo4j database.
-Using the SDN, the interface definition extending the class Neo4jRepository gives a default implementation to execute standard database operations. When a more specific implementation are necessary, the standard interface can be implemented.
+The *repository* package provides methods to persist domain objects in Neo4j database. Using SDN the interface definition extending the class Neo4jRepository gives a default implementation that executes standard database operations, and when a more specific implementation is necessary, the standard interface can be implemented.
 
 RoleRepository:
 ```java
@@ -594,7 +591,7 @@ public class RoleService {
 
 ### The *utils* package
 
-This package contains some utilities to be used in any part of the source code. Following, the utilities classes are presented.
+The package *utils* has some utilities to be used at runtime. Examples of utility classes are presented at following.
 
 The class *ContextProvider* give access to beans managed by Spring without declaring annotated attributes with @Resource or @Autowired.
 
@@ -628,7 +625,7 @@ public class ContextProvider implements ApplicationContextAware {
 }
 ```
 
-The *SessionManager* class implements an utility method that return the session user object stored in Redis.
+The *SessionManager* class implements a utility method that returns the session user object stored in Redis.
 
 SessionManager.java
 ```java
@@ -666,13 +663,13 @@ public class SessionManager {
 
 ## Tests
 
-The annotated *FullPersistenceTest* class shows an example used to create integrated tests. This class aims to validate the functionalities of SDN as creation, modification and deletion using complex structures.
+The annotated *FullPersistenceTest* class shows an example used to create integrated tests. This class aims to validate the functionalities of SDN as creation, modification, and deletion using complex structures.
 
 The first test detected that SDN does not make possible to eliminate one-to-one relationships when defining an entity attribute as null of the object instance being persisted.
 
-The second test detected that, when a entity is removed from a collection (one-to-many or many-to-many relationship), is not possible to save the entity owner of the collection removing the detached objects (cascade removal).
+The second test detected that, when an entity is removed from a collection (one-to-many or many-to-many relationship), is not possible to save the entity owner of the collection removing the detached objects (cascade removal).
 
-Is concluded that, using SDN to persist stateless objects with more complex structures, is very hard to manage relationships as is made with JPA and Hibernate for cascade persisting.
+Is concluded that using SDN to persist stateless objects with more complex structures, is very hard to manage relationships as is made with JPA and Hibernate for cascade persisting.
 The next code shows the *FullPersistenceTest*. 
 
 FullPersistenceTest.java
@@ -798,16 +795,16 @@ public class FullPersistenceTest {
         O2.getChildren().add(O3);
         O1 = objectInstanceService.save(O1);
 
-        // Remover associação direta. Problema ao remover o relacionamento por
-        // meio do save! Tenho que fazer uma query manual
+        // Tries to remove the direct association, but defining the attribute as null doesn't delete the relationship. 
+        // Is necessary execute a manual query.
         ObjectValue OV = objectValueRepository.findById(O1.getValues().get(0).getId()).get();
         OV.setValue("00002");
         OV.setAttribute(null);
         objectValueRepository.save(OV);
         objectValueRepository.removeCharacteristic(OV.getId());
 
-        // Remover o objeto da lista, não consigo remover sem mandar remover
-        // explicitamente o objeto
+        // Tries to remove a value from the list, but on saving the root entity the value removed from the list is not deleted. 
+        // Is necessary delete explicitly the value. (cascade mode doesn't works)
         O1 = objectInstanceService.findOne(O1.getId());
         OV = O1.getValues().get(0);
         OV.setObjectInstance(null);
@@ -824,8 +821,8 @@ public class FullPersistenceTest {
 
 # Conclusion
 
-The conclusion in using spring boot to develop application is that, the framework simplifies and let more easy the web application development.
+The conclusion in using spring boot to develop an application is that the framework is simplified letting easier the web application development.
 
-The security and persistence configuration using annotations, let the application more clean and with less mixtures of .java and .xml files.
+The security and persistence configuration using annotations makes the application cleaner and with fewer mixtures of .java and .xml files.
 
-The difficulties found are related to use SDN to persist objects as in JPA, for domain objects encoded as relational data.
+The difficulties found are related to using SDN to persist objects as is made in JPA. For this project a relational database should be more suitable.
