@@ -16,7 +16,7 @@ The non-functional requirements are:
 # Environment
 
 The development environment is composed of the following programs:
-* JDK versão 9.0.1+11 64bit
+* JDK version 9.0.1+11 64bit
 * IntelliJ IDEA Community 2017.1.4
 * Maven 3.3.9
 * Docker 17.09.1-ce
